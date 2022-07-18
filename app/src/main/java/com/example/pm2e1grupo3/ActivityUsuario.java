@@ -1,12 +1,6 @@
 package com.example.pm2e1grupo3;
 
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
@@ -30,14 +24,19 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.pm2e1grupo3.Models.RestApiMethods;//
+import com.example.pm2e1grupo3.Models.RestApiMethods;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONException;
@@ -48,7 +47,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 public class ActivityUsuario extends AppCompatActivity {
 
@@ -90,13 +88,6 @@ public class ActivityUsuario extends AppCompatActivity {
         txtLon = (EditText) findViewById(R.id.txtLon);
 
 
-        btnListarContactos.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(),ActivityListarContactos.class);
-                startActivity(intent);
-            }
-        });
 
 
         btnTomarfoto.setOnClickListener(new View.OnClickListener() {
@@ -126,7 +117,20 @@ public class ActivityUsuario extends AppCompatActivity {
             }
         });
 
-        //valida si tiene los permisos de ser asi manda a llamar el metodo locationStart()
+
+        btnListarContactos.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+
+                Intent atras = new Intent(getApplicationContext(),ActivityListarContactos.class);
+                startActivity(atras);
+
+            }
+        });
+
+
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,}, 1000);
         } else {
@@ -169,13 +173,13 @@ public class ActivityUsuario extends AppCompatActivity {
         }
     }
 
-    //**Entrar a la carpeta de fotos del telefono**//
+
     private void GaleriaImagenes() {
         Intent photoPickerIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(photoPickerIntent, RESULT_GALLERY_IMG);
     }
 
-    //***Metodo para convertir imagen***//
+
     private String GetStringImage(Bitmap photo) {
 
         try {
@@ -204,7 +208,6 @@ public class ActivityUsuario extends AppCompatActivity {
         }else{
             Toast.makeText(getApplicationContext(),"Se necesitan permisos",Toast.LENGTH_LONG).show();
         }
-        //permiso para GPS
         if (requestCode == 1000) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 locationStart();
@@ -218,7 +221,6 @@ public class ActivityUsuario extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         Uri imageUri;
-        //obtener la iamgen por el almacenamiento interno
         if(resultCode==RESULT_OK && requestCode==RESULT_GALLERY_IMG)
         {
 
@@ -232,16 +234,13 @@ public class ActivityUsuario extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(),"Error al seleccionar imagen", Toast.LENGTH_SHORT).show();
             }
         }
-        //obtener la iamgen por la camara
+
         if(requestCode == TAKE_PIC_REQUEST && resultCode == RESULT_OK)
         {
             Bundle extras = data.getExtras();
             imagen = (Bitmap) extras.get("data");
             Foto.setImageBitmap(imagen);
         }
-
-
-
     }
 
 
@@ -254,7 +253,7 @@ public class ActivityUsuario extends AppCompatActivity {
         String fotoString = GetStringImage(imagen);
 
 
-        //setear los parametros mediante put
+
         parametros.put("nombre", txtNombre.getText().toString());
         parametros.put("telefono", txtTelefono.getText().toString());
         parametros.put("latitud", txtLat.getText().toString());
@@ -292,14 +291,12 @@ public class ActivityUsuario extends AppCompatActivity {
     }
 
 
-    //-----------------------------LATITUD Y LONGITUD----------------------------------------
     private void locationStart() {
         LocationManager mlocManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         Localizacion Local = new Localizacion();
         Local.setMainActivity(this);
         final boolean gpsEnabled = mlocManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
         if (!gpsEnabled) {
-            //SE VA A LA CONFIGURACION DEL SISTEMA PARA QUE ACTIVE EL GPS UNA VEZ QUE INICIA LA APLICACION
             Intent settingsIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
             startActivity(settingsIntent);
         }
@@ -322,8 +319,7 @@ public class ActivityUsuario extends AppCompatActivity {
 
         @Override
         public void onLocationChanged(Location loc) {
-            // Este metodo se ejecuta cada vez que el GPS recibe nuevas coordenadas
-            // debido a la deteccion de un cambio de ubicacion
+
 
             loc.getLatitude();
             loc.getLongitude();
@@ -357,7 +353,6 @@ public class ActivityUsuario extends AppCompatActivity {
     }
 
     public void setLocation(Location loc) {
-        //Obtener la direccion de la calle a partir de la latitud y la longitud
         if (loc.getLatitude() != 0.0 && loc.getLongitude() != 0.0) {
             try {
                 Geocoder geocoder = new Geocoder(this, Locale.getDefault());

@@ -7,12 +7,9 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Base64;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -29,8 +26,6 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.pm2e1grupo3.Models.RestApiMethods;
 import com.example.pm2e1grupo3.Models.Usuario;
-import com.example.pm2e1grupo3.Models.RestApiMethods;//
-import com.example.pm2e1grupo3.Models.Usuario;//
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -58,7 +53,8 @@ public class ActivityListarContactos extends AppCompatActivity {
     final Context context = this;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_listar_contactos);
 
@@ -78,33 +74,6 @@ public class ActivityListarContactos extends AppCompatActivity {
 
         listarUsuarios();
 
-        //------------------------------EVENTOS BOTONES Y BUSCAR------------------------------------
-        buscar.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                try {
-                    BuscarUsuario(buscar.getText().toString());
-                    if (buscar.getText().toString().equals("")){
-                        listarUsuarios();
-                    }
-                } catch (Exception ex){
-                    Toast.makeText(getApplicationContext(),"Valor invalido",Toast.LENGTH_SHORT).show();
-                }
-
-            }
-        });
 
 
         btnActualizar.setOnClickListener(new View.OnClickListener() {
@@ -135,33 +104,30 @@ public class ActivityListarContactos extends AppCompatActivity {
             public void onClick(View view) {
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
 
-                // set title
-
                 alertDialogBuilder.setTitle("Eliminar Usuario");
 
 
-                // set dialog message
                 alertDialogBuilder
                         .setMessage("¿Está seguro de eliminar el usuario "+usuario.getNombre()+"?")
                         .setCancelable(false)
                         .setPositiveButton("SI",new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                // si el usuario da click en si procede a llamar el metodo de eliminar
+                            public void onClick(DialogInterface dialog, int id)
+                            {
                                 eliminarUsuario(String.valueOf(usuario.getId()));
                             }
                         })
-                        .setNegativeButton("No",new DialogInterface.OnClickListener() {
+                        .setNegativeButton("No",new DialogInterface.OnClickListener()
+                        {
                             public void onClick(DialogInterface dialog,int id) {
-                                // if this button is clicked, just close
-                                // the dialog box and do nothing
+
                                 dialog.cancel();
                             }
                         });
 
-                // create alert dialog
+
                 AlertDialog alertDialog = alertDialogBuilder.create();
 
-                // show it
+
                 alertDialog.show();
             }
         });
@@ -176,7 +142,7 @@ public class ActivityListarContactos extends AppCompatActivity {
             }
         });
 
-        //-- lista evento click
+
         listUsuario.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -185,7 +151,7 @@ public class ActivityListarContactos extends AppCompatActivity {
                     count++;
                     if(count==2 && System.currentTimeMillis()-previousMil<=1000)
                     {
-                        //Toast.makeText(getApplicationContext(), "Doble Click ",Toast.LENGTH_LONG).show();
+
                         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
                         alertDialogBuilder.setTitle("Acción");
                         alertDialogBuilder
@@ -193,7 +159,7 @@ public class ActivityListarContactos extends AppCompatActivity {
                                 .setCancelable(false)
                                 .setPositiveButton("SI",new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
-                                        // se procede a ir a la ubicacion seteando los parametros
+
                                         try{
                                             Intent intent = new Intent(getApplicationContext(),MapsActivity.class);
                                             intent.putExtra("latitud", usuario.getLatitud());
@@ -221,9 +187,9 @@ public class ActivityListarContactos extends AppCompatActivity {
                     count=1;
                     previousMil=System.currentTimeMillis();
                     //un clic
-                    usuario = usuarioList.get(i);//lleno la lista de contacto
-                    setUsuarioSeleccionado();//obtengo el usuario seleccionado de la lista
-                    //Toast.makeText(getApplicationContext(),"usuario id: "+usuario.getId(), Toast.LENGTH_SHORT).show();
+                    usuario = usuarioList.get(i);
+                    setUsuarioSeleccionado();
+
                 }
             }
 
@@ -233,14 +199,13 @@ public class ActivityListarContactos extends AppCompatActivity {
 
 
     }
-    //-----------------------------------METODOS---------------------------------------
 
 
 
     private void listarUsuarios() {
         RequestQueue queue = Volley.newRequestQueue(this);
 
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, RestApiMethods.EndPointGetContact,
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, RestApiMethods.EndPointGetUsuario,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -280,57 +245,9 @@ public class ActivityListarContactos extends AppCompatActivity {
         queue.add(stringRequest);
     }
 
-    private void BuscarUsuario(String dato) {
-        RequestQueue queue = Volley.newRequestQueue(this);
-        //String url = "http://transportweb2.online/APIexam/listasinglecontacto.php?nombre=";
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, RestApiMethods.EndPointGetBuscarContact+dato,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-                            JSONObject jsonObject = new JSONObject(response);
-                            JSONArray contactoArray = jsonObject.getJSONArray( "contacto");
-
-                            arrayUsuario.clear();//limpiar la lista de usuario antes de comenzar a buscar
-
-//                            if ()){
-//                                Toast.makeText(getApplicationContext(), "No se encontro el valor", Toast.LENGTH_SHORT).show();
-//                            }
-
-                            for (int i=0; i<contactoArray.length(); i++)
-                            {
-                                JSONObject RowUsuario = contactoArray.getJSONObject(i);
-                                Usuario usuario = new Usuario(  RowUsuario.getInt("id"),
-                                        RowUsuario.getString("nombre"),
-                                        RowUsuario.getInt("telefono"),
-                                        RowUsuario.getString("latitud"),
-                                        RowUsuario.getString("longitud"),
-                                        RowUsuario.getString("foto")
-                                );
-                                usuarioList.add(usuario);
-                                arrayUsuario.add(usuario.getNombre()+' '+usuario.getTelefono());
-                            }
-
-                            adp = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_checked, arrayUsuario);
-                            listUsuario.setAdapter(adp);
-
-                        }catch (JSONException ex){
-                            Toast.makeText(getApplicationContext(), "mensaje "+ex, Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                }, new Response.ErrorListener(){
-            @Override
-            public void onErrorResponse(VolleyError error){
-                //Toast.makeText(getApplicationContext(), "mensaje "+error, Toast.LENGTH_SHORT).show();
-            }
-        });
-        queue.add(stringRequest);
-    }
-
     private void eliminarUsuario(String dato) {
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "http://transportweb2.online/APIexam/eliminarcontacto.php?id=";
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url+dato,
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, RestApiMethods.EndPointDeleteUsuario,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -340,7 +257,6 @@ public class ActivityListarContactos extends AppCompatActivity {
                 }, new Response.ErrorListener(){
             @Override
             public void onErrorResponse(VolleyError error){
-                //Toast.makeText(getApplicationContext(), "mensaje "+error, Toast.LENGTH_SHORT).show();
             }
         });
         queue.add(stringRequest);
@@ -352,16 +268,13 @@ public class ActivityListarContactos extends AppCompatActivity {
 
     private void setUsuarioSeleccionado() {
 
-        //contacto = listaContactos.get(id);
-        //intent = new Intent(getApplicationContext(),ActivityActualizarContacto.class);
+
         intent.putExtra("id", usuario.getId()+"");
         intent.putExtra("nombre", usuario.getNombre());
         intent.putExtra("telefono", usuario.getTelefono()+"");
         intent.putExtra("latitud", usuario.getLatitud());
         intent.putExtra("longitud", usuario.getLongitud());
-        intent.putExtra("foto2", usuario.getFoto()+"").toString();
-
-        //startActivity(intent);
+        intent.putExtra("foto", usuario.getFoto()+"").toString();
     }
 
 

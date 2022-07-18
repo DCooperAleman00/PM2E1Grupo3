@@ -58,13 +58,6 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/alcbtnEliminar"
-                android:layout_width="120dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:text="Eliminar" />
-
-            <Button
                 android:id="@+id/alcbtnActualizar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -78,6 +71,13 @@
                 android:layout_margin="5dp"
                 android:layout_weight="1"
                 android:text="Ubicacion" />
+
+            <Button
+                android:id="@+id/alcbtnEliminar"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:text="Eliminar" />
 
         </LinearLayout>
 

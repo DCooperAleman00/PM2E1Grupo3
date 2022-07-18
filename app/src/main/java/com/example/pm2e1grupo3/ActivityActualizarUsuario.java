@@ -36,7 +36,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.pm2e1grupo3.Models.RestApiMethods;//
+import com.example.pm2e1grupo3.Models.RestApiMethods;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONException;
@@ -49,7 +49,6 @@ import java.util.List;
 import java.util.Locale;
 
 public class ActivityActualizarUsuario extends AppCompatActivity {
-    //cambio 18-03-2022
     Button btnAtras, btnActualizar,btnGaleria;
     FloatingActionButton btnTomarfoto;
     EditText txtNombre,txtTelefono,txtLat,txtLon;
@@ -121,7 +120,6 @@ public class ActivityActualizarUsuario extends AppCompatActivity {
         btnTomarfoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //----------------------obtener la nueva ubicacion de donde es tomada la foto
 
                 permisos();
 
@@ -145,7 +143,7 @@ public class ActivityActualizarUsuario extends AppCompatActivity {
             String base64Image = base64String.split(",")[1];
             byte[] decodedString = Base64.decode(base64Image, Base64.DEFAULT);
             Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-            Foto.setImageBitmap(decodedByte);//setea la imagen al imageView
+            Foto.setImageBitmap(decodedByte);
         }catch (Exception ex){
             ex.toString();
         }
@@ -156,7 +154,6 @@ public class ActivityActualizarUsuario extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         Uri imageUri;
-        //obtener la iamgen por el almacenamiento interno
         if(resultCode==RESULT_OK && requestCode==RESULT_GALLERY_IMG)
         {
 
@@ -170,7 +167,6 @@ public class ActivityActualizarUsuario extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(),"Error al seleccionar imagen", Toast.LENGTH_SHORT).show();
             }
         }
-        //obtener la iamgen por la camara
         if(requestCode == TAKE_PIC_REQUEST && resultCode == RESULT_OK)
         {
             Bundle extras = data.getExtras();
@@ -180,14 +176,11 @@ public class ActivityActualizarUsuario extends AppCompatActivity {
 
     }
 
+    private void actualizarUsuario(String id)
+    {
 
-    //--------------------------------metodo actualizar imagen-------------------------------------------------
-    private void actualizarUsuario(String id) {
-        //String url = "http://transportweb2.online/APIexam/listasinglecontacto.php?nombre=";
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
         HashMap<String, String> parametros = new HashMap<>();
-        //obtiene la foto tomada o seleccionada, luego verifica en un if si la variable
-        // fotoString2 no este vacia ya que en caso que este vacia significa que no se actualiza la foto
         String fotoString2 = GetStringImage(imagen);
         if (fotoString2.equals("")||fotoString2.isEmpty()||fotoString2.equals(null)){
             fotoString2 = fotoString;
@@ -201,7 +194,7 @@ public class ActivityActualizarUsuario extends AppCompatActivity {
         parametros.put("longitud", txtLon.getText().toString());
         parametros.put("foto", fotoString2);
 
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, RestApiMethods.EndPointSetUpdateContact,
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, RestApiMethods.EndPointUpdateUsuario,
                 new JSONObject(parametros), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -222,9 +215,6 @@ public class ActivityActualizarUsuario extends AppCompatActivity {
         requestQueue.add(jsonObjectRequest);
     }
 
-    //-------------------------------------------------------------------------------------------------------------------
-
-    //***Metodo para convertir imagen a String***//
     private String GetStringImage(Bitmap photo) {
 
         try {
@@ -248,7 +238,6 @@ public class ActivityActualizarUsuario extends AppCompatActivity {
             ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.CAMERA},PETICION_ACCESO_CAM);
         }else{
             tomarFoto();
-            //despues de tomar la foto actualiza la ubicacion de donde fue tomada.
             locationStart();
             Toast.makeText(getApplicationContext(),"La latitud y longitud seran actualizadas", Toast.LENGTH_SHORT).show();
         }
@@ -263,7 +252,7 @@ public class ActivityActualizarUsuario extends AppCompatActivity {
         }
     }
 
-    //**Entrar a la carpeta de fotos del telefono**//
+
     private void GaleriaImagenes() {
         Intent photoPickerIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(photoPickerIntent, RESULT_GALLERY_IMG);
@@ -271,14 +260,14 @@ public class ActivityActualizarUsuario extends AppCompatActivity {
 
 
 
-    //-----------------------------LATITUD Y LONGITUD----------------------------------------
+
     private void locationStart() {
         LocationManager mlocManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         ActivityActualizarUsuario.Localizacion Local = new ActivityActualizarUsuario.Localizacion();
         Local.setMainActivity(this);
         final boolean gpsEnabled = mlocManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
         if (!gpsEnabled) {
-            //SE VA A LA CONFIGURACION DEL SISTEMA PARA QUE ACTIVE EL GPS UNA VEZ QUE INICIA LA APLICACION
+
             Intent settingsIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
             startActivity(settingsIntent);
         }
@@ -301,8 +290,7 @@ public class ActivityActualizarUsuario extends AppCompatActivity {
 
         @Override
         public void onLocationChanged(Location loc) {
-            // Este metodo se ejecuta cada vez que el GPS recibe nuevas coordenadas
-            // debido a la deteccion de un cambio de ubicacion
+
 
             loc.getLatitude();
             loc.getLongitude();
@@ -336,7 +324,7 @@ public class ActivityActualizarUsuario extends AppCompatActivity {
     }
 
     public void setLocation(Location loc) {
-        //Obtener la direccion de la calle a partir de la latitud y la longitud
+
         if (loc.getLatitude() != 0.0 && loc.getLongitude() != 0.0) {
             try {
                 Geocoder geocoder = new Geocoder(this, Locale.getDefault());

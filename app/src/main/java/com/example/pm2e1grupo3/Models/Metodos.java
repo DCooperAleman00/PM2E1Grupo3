@@ -4,7 +4,8 @@ import android.graphics.Bitmap;
 
 import java.io.ByteArrayOutputStream;
 
-public class Metodos {
+public class Metodos
+{
 
     public byte[] setBitmaptobyte(Bitmap bitmap) {
 
